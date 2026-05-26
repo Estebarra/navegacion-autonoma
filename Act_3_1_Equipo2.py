@@ -1,6 +1,10 @@
 # ==============================================================================
 # Actividad 3.1 - Detección de Peatones con SVM
 # Equipo 2
+# A01570123 - Carlos Enrique García Díaz  
+# A01796851 - Kenji Omar Ramírez Álvarez  
+# A01796858 - Luis Esteban Barranco Guida  
+# A01100001 - Alejandro Eli Acosta Flores
 # ==============================================================================
 
 # Recursos de Webots
@@ -25,12 +29,12 @@ KI = 0.0
 KD = 0.002
 
 # CONSTANTES DE RECONOCIMIENTO DE PEATONES
-SVM_MODEL_PATH = "svm_pedestrian_detector.pkl"
+SVM_MODEL_PATH = "svm_pedestrian_detector_ECI_sqrt.pkl"
 
 OBSTACLE_DISTANCE_LIMIT = 20.0  # m, distancia máxima para considerar obstáculo
 STOP_DISTANCE = 10.0            # m, distancia para detenerse si hay peatón
 
-MIN_PEDESTRIAN_SCORE = 1.5      # Umbral de detección de peatones
+MIN_PEDESTRIAN_SCORE = 0.0      # Umbral de detección de peatones
 
 CAUTION_SPEED = 20.0            # km/hr, velocidad reducida
 CAUTION_BRAKE = 0.3             # frenado moderado
@@ -202,7 +206,7 @@ def get_HOGFeatures(img_window):
                    orientations=11,
                    pixels_per_cell=(16, 16),
                    cells_per_block=(2, 2),
-                   transform_sqrt=False,
+                   transform_sqrt=True,
                    visualize=False,
                    feature_vector=True)
 
@@ -217,13 +221,13 @@ def detect_pedestrian(image, svm_model):
     pedestrian_scores = []
 
     # Ventanas verticales con proporción cercana a 1:2
-    window_sizes = [(32, 64), (40, 80)]
+    window_sizes = [(15, 30), (25, 50)]#, (32, 64), (40, 80)]
 
     # Píxeles que se moverá la ventana deslizante con cada aparición
     step_size = 16
 
     # Evitar buscar demasiado arriba si hay cielo o edificios
-    y_start = int(img_height * 0.10)
+    y_start = int(img_height * 0.20)
     y_end = img_height
 
     for win_w, win_h in window_sizes:
@@ -233,9 +237,9 @@ def detect_pedestrian(image, svm_model):
         for y in range(y_start, y_end - win_h + 1, step_size):
 
             # Si la ventana está más arriba, limitar búsqueda al centro
-            if y < int(img_height * 0.35):
-                x_start = int(img_width * 0.25)
-                x_end = int(img_width * 0.75)
+            if y < int(img_height * 0.45):
+                x_start = int(img_width * 0.30)
+                x_end = int(img_width * 0.70)
 
             # Si la ventana está más abajo, permitir búsqueda más amplia
             else:
